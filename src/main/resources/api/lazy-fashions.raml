@@ -1,0 +1,50 @@
+#%RAML 1.0
+baseUri: https://anypoint.mulesoft.com/mocking/api/v1/links/1e0b32db-1281-4f5d-8f3e-265a18b1ec8b/ # 
+title: lazy fashions
+version: v1
+description: customers information of Lazy fashions
+
+types: 
+ customerdata: !include datatype/lazy-fashions-dataType.raml
+
+/customers:
+  get:
+    description: customer details
+    responses: 
+      200:
+        body:
+          application/json:
+            example: !include examples/lazy-fashions-example.raml
+  post:
+    description: inserting customer information
+    responses:
+      201:
+        body:
+          application/json:
+            example: !include examples/lazy-fashion-postexample.raml
+
+  patch:
+    description: updating customer details
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/lazy-fashions-patchexample.raml
+              
+                     
+/{cust-id}:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/lazy-fashions-id-example.raml
+
+                      
+              
+ 
+              
+        
+            
+      
+  

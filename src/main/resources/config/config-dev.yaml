@@ -1,0 +1,46 @@
+salesforce:
+  username: "muleuser@presidio2.com.redev"
+  password: "MuleIntegr@ti0n"
+  token: "N3gTtwsrPOlcgnyAsIhDM4X1p"
+  url: "https://test.salesforce.com/services/Soap/u/43.0"
+
+http:
+  host: 0.0.0.0
+  port: "8082"
+
+api:
+  path: opp
+apiacc:
+  path: acc
+apicon:
+  path: con
+  
+HttpRequestOpp:
+  host: "myorders-api-test.presidio.com"
+  port: "443"
+  path: "/v1.0/sfdc/opportunity/"
+HttpRequestAcc:
+  host: "myorders-api-test.presidio.com"
+  port: "443"
+  path: "/v1.0/sfdc/customer/"
+HttpRequestCon:
+  host: "myorders-api-test.presidio.com"
+  port: "443"
+  path: "/v1.0/sfdc/contact/"
+HttpRequestTok:
+  host: "myorders-api-test.presidio.com"
+  port: "443"
+  path: "/auth/token/"
+
+topic:
+  opportunity: "MyOrderOpportunitySync"
+  account: "AccountSync"
+  contact: "ContactSync"
+
+token:
+  grand_type: "client_credentials"
+  client_id: "mpJXUViZf5vAP6l6X6jf/Muaf7JmDCdJ/YRJuTdODIE="
+  client_secret: "aW/waVZ6EERoDBbKpZxqhnu6FaD02AY3dZrLTE53204fqydhezngrhWqjLfHNOJ99UbEFjdkmyCVCi0km/U86A=="
+
+objectstore:
+  ttl: "30"  

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<os:object-store name="Object_store" doc:name="Object store" doc:id="a644c62e-2507-4acf-9d2c-d54e1a90ec46" />
+	<flow name="mf-sfdc-db-integration" doc:id="4c10ad43-fd2d-42fb-a621-ae494553a178" >
+		<scheduler doc:name="Scheduler" doc:id="d5b37efd-055d-430e-8629-c222728dc381" >
+			<scheduling-strategy >
+				<fixed-frequency />
+			</scheduling-strategy>
+		</scheduler>
+		<logger level="INFO" doc:name="mf-sfdc-db-integration flow started" doc:id="6c6f79ec-aeb1-4c3b-ba71-1b5c12acc997" message="mf-sfdc-db-integration flow started"/>
+		<os:retrieve doc:name="Retrieve" doc:id="a24d1c9e-57a1-4ab2-87f1-2ac1dd35b9ee" key="lastModifiedDateTime" objectStore="Object_store">
+			<os:default-value ><![CDATA[#[now()]]]></os:default-value>
+		</os:retrieve>
+		<salesforce:query doc:name="Query" doc:id="4df1d98c-db4d-4109-8f76-2f4ad237671f" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query >SELECT name,Phone,AccountNumber,shippingcity,shippingstate,shippingcountry FROM account</salesforce:salesforce-query>
+		</salesforce:query>
+		<ee:transform doc:name="Transform Message" doc:id="84a3bff5-e949-479f-b2c7-56d0a063dae4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map {
+firstnameParam: $."FIRST NAME",
+lastnameParam: $."LAST NAME",
+middlenameParam: $."MIDDLE NAME",
+emailParam: $."EMAIL",
+homeAddressParam: $."HOME ADDRESS"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<db:bulk-insert doc:name="Bulk insert" doc:id="4fc90c69-e9c1-41ac-8c9b-0b7771e14244" config-ref="Database_Config">
+			<db:sql >INSERT INTO customer (FIRST_NAME,LAST_NAME,MIDDLE_NAME,EMAIL,HOME_ADDRESS) VALUES (:firstnameParam,:lastnameParam,:middlenameParam,:emailParam,:homeAddressParam)</db:sql>
+		</db:bulk-insert>
+		<ee:transform doc:name="Transform Message" doc:id="d4fce729-9787-42cc-b5e7-a9a4c6cdc23e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<os:store doc:name="Store" doc:id="0447d669-8917-4ac7-9fef-a8ea9c21d086" key="lastModifiedDateTime" objectStore="Object_store"/>
+		<logger level="INFO" doc:name="mf-sfdc-db-integration flow ended" doc:id="77735025-6586-4ab0-9917-61761deab293" message="mf-sfdc-db-integration flow ended"/>
+	</flow>
+
+	
+	</mule>

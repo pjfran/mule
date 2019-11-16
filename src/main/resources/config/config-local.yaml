@@ -1,0 +1,10 @@
+salesforce:
+  username: "harish.ravichandran@apisero.com"
+  password: "Password@1"
+  token: "QeJBhiCdDM4csVAxueMTnSSA"
+  url: "https://login.salesforce.com/services/Soap/u/46.0"
+
+http:
+  host: 0.0.0.0
+  port: "8082"
+

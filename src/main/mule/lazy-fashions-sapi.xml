@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="sf-create-sfdc" doc:id="69e3c24a-4e71-42e6-98d7-6601d4955d77" >
+		<logger level="INFO" doc:name="Logger" doc:id="612da96e-0775-4d89-804f-b6eda79ba3d2" message="#[correlationId] lazy fashion create flow started"/>
+		<salesforce:create type="Account" doc:name="Create" doc:id="9cdb1caf-92fd-43a8-b163-c3abce056a85" config-ref="Salesforce_Config"/>
+		<ee:transform doc:name="Transform Message" doc:id="7a3c97b5-ecb1-43d9-8716-3c2c91586ec2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="5655b5bd-36b6-44b5-8236-e0c87e9a062a" message="#[correlationId] lazy fashion create flow ends"/>
+	</flow>
+	<flow name="sf-query-customer" doc:id="c2075e99-02c1-480d-b208-5fc2322e9ee0" >
+		<salesforce:query-single doc:name="Query Customer SFDC" doc:id="2ce0b6a8-190f-4a84-9a85-fdeb841ca46d" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query >SELECT name,Phone,AccountNumber,shippingcity,shippingstate,shippingcountry FROM account</salesforce:salesforce-query>
+		</salesforce:query-single>
+		<ee:transform doc:name="Transform Message" doc:id="4c9be2a8-2db9-4b4f-8b68-6d8cb7533a23" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="sf-upsert-sfdc" doc:id="b9068c11-2ff9-4117-ad0c-4dcb58b13619" >
+		<salesforce:upsert type="Account" doc:name="Upsert" doc:id="8b738b73-4a28-487a-9d20-979f7f5e9f22" config-ref="Salesforce_Config" externalIdFieldName="id"/>
+		<ee:transform doc:name="Transform Message" doc:id="61e08194-f872-4074-85ab-afab2c36e1af" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="lazy-fashions-sapiFlow3" doc:id="a450177a-dcc1-409d-8835-efd899c38986" >
+		<db:select doc:name="Select" doc:id="3e34efa7-9100-41a9-bd91-6e83fce18717" config-ref="Database_Config">
+			<db:sql >SELECT name,phone,accountnumber,shippingcity,shippingstate,shippingcountry  FROM customer </db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="b1931b40-2e69-4a68-b1dc-de63cfd9c3c1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
